@@ -3,8 +3,8 @@ const path = require('path');
 const mongoose = require('mongoose');
 const db = 'mongodb://localhost/imooc-app';
 
-// mongoose.Promise = require('bluebird');
-mongoose.Promise = global.Promise;
+mongoose.Promise = require('bluebird');
+// mongoose.Promise = global.Promise;
 mongoose.connect(db);
 
 // require('./app/models/user');

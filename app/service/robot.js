@@ -2,13 +2,13 @@ const qiniu = require('qiniu');
 const config = require('../../config/config');
 const sha1 = require("sha1");
 const uuidv4 = require('uuid/v4');
-const cloudinaty = require('cloudinary');
+const cloudinary = require('cloudinary');
 const Promise = require('bluebird');
 
 const accessKey = config.qiniu.AK;
 const secretKey = config.qiniu.SK;
 
-cloudinaty.config(config.cloudinary);
+cloudinary.config(config.cloudinary);
 
 exports.getQiniuToken = (body) => {
     let type = body.type;
@@ -28,8 +28,8 @@ exports.getQiniuToken = (body) => {
         options.persistentOps = 'avthumb/mp4/an/1';
         putPolicy = new qiniu.rs.PutPolicy(options);
     }
-    else if (type === 'video') {
-        key += '.aac';
+    else if (type === 'audio') {
+        // key += '.aac';
     }
 
     let mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
@@ -44,7 +44,7 @@ exports.getQiniuToken = (body) => {
 
 exports.uploadToCloudinary = (url) => {
     return new Promise((resolve, reject) => {
-        cloudinaty.uploader.upload(url, (result) => {
+        cloudinary.uploader.upload(url, (result) => {
             if (result && result.public_id) {
                 resolve(result);
             } else {
@@ -85,4 +85,22 @@ exports.getCloudinaryToken = (body) => {
         token: signature,
         key: key
     };
+};
+
+exports.saveToQiniu = (url, key) => {
+
+    let mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
+    let config = new qiniu.conf.Config();
+    let bucketManager = new qiniu.rs.BucketManager(mac, config);
+
+    return new Promise((resolve, reject) => {
+        bucketManager.fetch(url, 'video', key, (err, ret) => {
+            if (!err) {
+                resolve(ret);
+            } else {
+                reject(err);
+            }
+        })
+    })
+
 };

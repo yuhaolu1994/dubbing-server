@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 let ObjectId = Schema.Types.ObjectId;
-let Mixed = Schema.Types.Mixed;
 
-const AudioSchema = new Schema({
+const CreationSchema = new Schema({
     author: {
         type: ObjectId,
         ref: 'User'
@@ -14,11 +13,29 @@ const AudioSchema = new Schema({
         ref: 'Video'
     },
 
+    audio: {
+        type: ObjectId,
+        ref: 'Audio'
+    },
+
+    title: String,
+
     qiniu_video: String,
     qiniu_thumb: String,
 
-    public_id: String,
-    detail: Mixed,
+    cloudinary_thumb: String,
+    cloudinary_video: String,
+
+    finish: {
+        type: Number,
+        default: 0
+    },
+
+    votes: [String],
+    up: {
+        type: Number,
+        default: 0
+    },
 
     meta: {
         createAt: {
@@ -32,7 +49,7 @@ const AudioSchema = new Schema({
     }
 });
 
-AudioSchema.pre('save', async function() {
+CreationSchema.pre('save', async function() {
     if (this.isNew) {
         this.meta.createAt = this.meta.updateAt = Date.now();
     } else {
@@ -40,4 +57,4 @@ AudioSchema.pre('save', async function() {
     }
 });
 
-module.exports = mongoose.model('Audio', AudioSchema);
+module.exports = mongoose.model('Creation', CreationSchema);
