@@ -48,31 +48,26 @@ let userFields = [
 ];
 
 exports.find = async (ctx) => {
-    let page = parseInt(ctx.query.page, 10) || 1;
+    let feed = ctx.query.feed;
+    let cid = ctx.query.cid;
     let count = 5;
-    let offset = (page - 1) * count;
+    let query = {
+        finish: 100
+    };
 
-    // let queryArray = [
-    //     Creation
-    //         .find({finish: 100})
-    //         .sort({
-    //             'meta.createAt': -1
-    //         })
-    //         .skip(offset)
-    //         .limit(count)
-    //         .populate('author', userFields.join(' '))
-    //         .exec(),
-    //     Creation.count({finish: 100}).exec()
-    // ];
-
-    // let data = await queryArray;
+    if (cid) {
+        if (feed === 'recent') {
+            query._id = {'$gt': cid}
+        } else {
+            query._id = {'$lt': cid}
+        }
+    }
 
     let data = await Creation
-        .find({finish: 100})
+        .find(query)
         .sort({
             'meta.createAt': -1
         })
-        .skip(offset)
         .limit(count)
         .populate('author', userFields.join(' '))
         .exec();

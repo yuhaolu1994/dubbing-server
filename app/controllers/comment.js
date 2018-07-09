@@ -12,9 +12,15 @@ let userFields = [
 ];
 
 exports.find = async (ctx, next) => {
-    let id = ctx.query.creation;
+    let feed = ctx.query.feed;
+    let cid = ctx.query.cid;
+    let id = ctx.query.id;
+    let count = 5;
+    let query = {
+        creation: cid
+    };
 
-    if (!id) {
+    if (!cid) {
         ctx.body = {
             success: false,
             err: 'id should not be null'
@@ -23,31 +29,23 @@ exports.find = async (ctx, next) => {
         return next;
     }
 
-    // let queryArray = [
-    //     Comment.find({
-    //         creation: id
-    //     })
-    //         .populate('replyBy', userFields.join(' '))
-    //         .sort({
-    //             'meta.createAt': -1
-    //         })
-    //         .exec(),
-    //     Comment.count({finish: 100}).exec()
-    // ];
+    if (id) {
+        if (feed === 'recent') {
+            query._id = {'$gt': id}
+        } else {
+            query._id = {'$lt': id}
+        }
+    }
 
-    // let data = await queryArray;
-
-    let data = await Comment.find({
-        creation: id
-    })
+    let data = await Comment.find(query)
         .populate('replyBy', userFields.join(' '))
         .sort({
             'meta.createAt': -1
         })
+        .limit(count)
         .exec();
 
-    let total = await Comment.count({finish: 100}).exec();
-
+    let total = await Comment.count({creation: cid}).exec();
 
     ctx.body = {
         success: true,
@@ -87,11 +85,8 @@ exports.save = async (ctx, next) => {
         };
 
         comment.reply.push(reply);
-        await comment.save();
 
-        ctx.body = {
-            success: true
-        }
+        await comment.save();
     } else {
         comment = new Comment({
             creation: creation._id,
@@ -100,12 +95,23 @@ exports.save = async (ctx, next) => {
             content: commentData.content
         });
 
-        comment = await comment.save();
-
-        ctx.body = {
-            success: true,
-            data: [comment]
-        }
+        await comment.save();
     }
 
+    let data = await Comment.find({
+        creation: creation._id
+    })
+        .populate('replyBy', userFields.join(' '))
+        .sort({
+            'meta.createAt': -1
+        })
+        .exec();
+
+    let total = await Comment.count({creation: creation._id}).exec();
+
+    ctx.body = {
+        success: true,
+        data: data,
+        total: total
+    }
 };

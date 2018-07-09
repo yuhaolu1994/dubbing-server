@@ -20,7 +20,8 @@ exports.getQiniuToken = (body) => {
 
     if (type === 'avatar') {
         key += '.jpeg';
-        putPolicy = new qiniu.rs.PutPolicy('avatar:' + key);
+        options.scope = 'avatar:' + key;
+        putPolicy = new qiniu.rs.PutPolicy(options);
     }
     else if (type === 'video') {
         key += '.mp4';

@@ -82,10 +82,13 @@ exports.verify = async (ctx, next) => {
         ctx.body = {
             success: true,
             data: {
-                nickname: 'nickname_test',
+                nickname: user.nickname,
                 accessToken: user.accessToken,
                 avatar: user.avatar,
-                _id: user._id
+                _id: user._id,
+                gender: user.gender,
+                age: user.age,
+                breed: user.breed
             }
         }
     } else {
