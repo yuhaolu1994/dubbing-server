@@ -74,6 +74,8 @@ exports.find = async (ctx) => {
 
     let total = await Creation.count({finish: 100}).exec();
 
+    console.log(data);
+
     ctx.body = {
         success: true,
         data: data,
@@ -343,6 +345,8 @@ exports.save = async (ctx, next) => {
             creationData.qiniu_video = audio.qiniu_video;
             creationData.finish += 30;
         }
+
+        creationData.finish = 100;
 
         creation = new Creation(creationData);
     }
