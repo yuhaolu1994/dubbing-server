@@ -15,12 +15,20 @@ let walk = function (modelPath) {
         .readdirSync(modelPath)
         .forEach(function (file) {
             let filePath = path.join(modelPath, '/' + file);
+            // retrieve information about the file pointed to by pathname
             let stat = fs.statSync(filePath);
             if (stat.isFile()) {
+                // The test() method executes a search for a match
+                // between a regular expression and a specified string.
+                // Returns true or false.
+                // / regular expression /
+                // preceding the decimal point with \ means
+                // the pattern must look for the literal character '.'
                 if (/(.*)\.(js|coffee)/.test(file)) {
                     require(filePath);
                 }
             } else if (stat.isDirectory()) {
+                // recursion use walk
                 walk(filePath);
             }
         })
@@ -38,8 +46,13 @@ const router = require('./config/routes');
 const app = new Koa();
 
 app.keys = ['immoc'];
+// Development style logger middleware
 app.use(logger());
+
+// if you prefer all default config, just use => app.use(session(app))
 app.use(session(app));
+
+// the parsed body will store in ctx.request.body
 app.use(bodyParser());
 
 app
