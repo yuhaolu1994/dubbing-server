@@ -1,12 +1,12 @@
 # DubbingServer
 
 ## Introduction
-Back-end part of a full-stack dubbing app. 
+Back-end part of a full-stack dubbing app.</br>
 The front-end part link is https://github.com/yuhaolu1994/DubbingApp
 
 ## Usage
-1. install MongoDB on localhost and run mongo command
-2. open the project on IDE like Webstorm and run node app in terminal
+1. install MongoDB on localhost and run "mongo" command
+2. open the project in IDE like Webstorm and run "node app" command in terminal
 3. make sure your phone and computer are in the same WIFI
 4. change the variable baseUrl in config file to your current ip address
 
